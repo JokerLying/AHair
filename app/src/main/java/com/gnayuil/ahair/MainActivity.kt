@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
 
         private const val INPUT_VIDEO_STREAM_NAME = "input_video"
         private const val OUTPUT_VIDEO_STREAM_NAME = "output_video"
-        private val CAMERA_FACING = CameraFacing.FRONT
+        private var CAMERA_FACING = CameraFacing.FRONT
 
         private const val FLIP_FRAMES_VERTICALLY = true
 
@@ -56,9 +56,13 @@ class MainActivity : AppCompatActivity() {
 
     private var initDone = false
 
+    private lateinit var cameraSwitch: ImageView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        cameraSwitch = findViewById(R.id.camera_switch)
 
         initBottomSheet()
 
@@ -114,8 +118,18 @@ class MainActivity : AppCompatActivity() {
                     bottomSheet: View,
                     slideOffset: Float
                 ) {
+                    cameraSwitch.alpha = slideOffset
                 }
             })
+        cameraSwitch.setOnClickListener {
+            cameraSwitch.isClickable = false
+            CAMERA_FACING = if (CAMERA_FACING == CameraFacing.FRONT) {
+                CameraFacing.BACK
+            } else {
+                CameraFacing.FRONT
+            }
+            rebuild()
+        }
 
         initColorBlock()
     }
@@ -244,5 +258,6 @@ class MainActivity : AppCompatActivity() {
             CAMERA_FACING,
             null
         )
+        cameraSwitch.isClickable = true
     }
 }

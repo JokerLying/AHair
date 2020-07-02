@@ -20,6 +20,16 @@
             android:text="@string/no_camera_access" />
     </FrameLayout>
 
+    <ImageView
+        android:id="@+id/camera_switch"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="20dp"
+        android:alpha="0"
+        android:src="@mipmap/camera_switch" />
+
     <include layout="@layout/main_bottom_sheet" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
