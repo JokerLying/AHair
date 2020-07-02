@@ -23,7 +23,10 @@ import com.google.mediapipe.glutil.EglManager
 class MainActivity : AppCompatActivity() {
     companion object {
         private val COLOR_BLOCK =
-            arrayOf("0000FF", "F0F8FF", "58C9B9", "DF405A", "F0F8FF", "FFD700", "FFFF00")
+            arrayOf(
+                "0000FF", "58C9B9", "DF405A", "F0F8FF", "FFD700", "3F4C77"
+                , "7BCBED", "004369", "F3004B", "FEC0C1", "FFF75E"
+            )
         private val BINARY_GRAPH_NAME = COLOR_BLOCK[0] + ".binarypb"
 
         private const val INPUT_VIDEO_STREAM_NAME = "input_video"
