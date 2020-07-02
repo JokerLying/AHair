@@ -7,8 +7,9 @@ import android.view.*
 import android.widget.GridView
 import android.widget.ImageView
 import android.widget.RelativeLayout
-import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.core.CameraX
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
@@ -27,7 +28,7 @@ class MainActivity : AppCompatActivity() {
                 "0000FF", "58C9B9", "DF405A", "F0F8FF", "FFD700", "3F4C77"
                 , "7BCBED", "004369", "F3004B", "FEC0C1", "FFF75E"
             )
-        private val BINARY_GRAPH_NAME = COLOR_BLOCK[0] + ".binarypb"
+        private var BINARY_GRAPH_NAME = COLOR_BLOCK[0] + ".binarypb"
 
         private const val INPUT_VIDEO_STREAM_NAME = "input_video"
         private const val OUTPUT_VIDEO_STREAM_NAME = "output_video"
@@ -56,21 +57,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        previewDisplayView = SurfaceView(this)
-        setupPreviewDisplayView()
 
         initBottomSheet()
 
         AndroidAssetUtil.initializeNativeAssetManager(this)
-        eglManager = EglManager(null)
-        processor = FrameProcessor(
-            this,
-            eglManager.nativeContext,
-            BINARY_GRAPH_NAME,
-            INPUT_VIDEO_STREAM_NAME,
-            OUTPUT_VIDEO_STREAM_NAME
-        )
-        processor.videoSurfaceOutput.setFlipY(FLIP_FRAMES_VERTICALLY)
         PermissionHelper.checkAndRequestCameraPermissions(this)
     }
 
@@ -138,17 +128,46 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun colorBlockClick(position: Int) {
-        Toast.makeText(this, position.toString(), Toast.LENGTH_SHORT).show()
+        if (position >= COLOR_BLOCK.size) {
+            AlertDialog.Builder(this@MainActivity)
+                .setMessage("More color or custom color is coming.")
+                .setTitle("To Be Continued")
+                .setPositiveButton("Got it", null)
+                .create()
+                .show()
+        } else {
+            BINARY_GRAPH_NAME = COLOR_BLOCK[position] + ".binarypb"
+            rebuild()
+        }
     }
 
-    override fun onResume() {
-        super.onResume()
+    private fun rebuild() {
+        CameraX.unbindAll()
+
+        previewDisplayView = SurfaceView(this)
+        setupPreviewDisplayView()
+
+        eglManager = EglManager(null)
+        processor = FrameProcessor(
+            this,
+            eglManager.nativeContext,
+            BINARY_GRAPH_NAME,
+            INPUT_VIDEO_STREAM_NAME,
+            OUTPUT_VIDEO_STREAM_NAME
+        )
+        processor.videoSurfaceOutput.setFlipY(FLIP_FRAMES_VERTICALLY)
+
         converter = ExternalTextureConverter(eglManager.context)
         converter.setFlipY(FLIP_FRAMES_VERTICALLY)
         converter.setConsumer(processor)
         if (PermissionHelper.cameraPermissionsGranted(this)) {
             startCamera()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        rebuild()
     }
 
     override fun onPause() {
@@ -166,6 +185,9 @@ class MainActivity : AppCompatActivity() {
     private fun setupPreviewDisplayView() {
         previewDisplayView.visibility = View.GONE
         val viewGroup = findViewById<ViewGroup>(R.id.preview_display_layout)
+        if (viewGroup.childCount > 1) {
+            viewGroup.removeViews(0, viewGroup.childCount - 1)
+        }
         viewGroup.addView(previewDisplayView)
         previewDisplayView
             .holder
