@@ -4,8 +4,10 @@ import android.graphics.SurfaceTexture
 import android.os.Bundle
 import android.util.Size
 import android.view.*
+import android.widget.GridView
 import android.widget.ImageView
 import android.widget.RelativeLayout
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -20,7 +22,10 @@ import com.google.mediapipe.glutil.EglManager
 
 class MainActivity : AppCompatActivity() {
     companion object {
-        private const val BINARY_GRAPH_NAME = "58C9B9.binarypb"
+        private val COLOR_BLOCK =
+            arrayOf("0000FF", "F0F8FF", "58C9B9", "DF405A", "F0F8FF", "FFD700", "FFFF00")
+        private val BINARY_GRAPH_NAME = COLOR_BLOCK[0] + ".binarypb"
+
         private const val INPUT_VIDEO_STREAM_NAME = "input_video"
         private const val OUTPUT_VIDEO_STREAM_NAME = "output_video"
         private val CAMERA_FACING = CameraFacing.FRONT
@@ -44,6 +49,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var converter: ExternalTextureConverter
 
     private lateinit var cameraHelper: CameraXPreviewHelper
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -111,6 +117,25 @@ class MainActivity : AppCompatActivity() {
                 ) {
                 }
             })
+
+        initColorBlock()
+    }
+
+    private fun initColorBlock() {
+        val colorList = ArrayList<ColorBlock>()
+        for (colorBlock in COLOR_BLOCK) {
+            colorList.add(ColorBlock("#" + colorBlock))
+        }
+
+        val colorGallery = findViewById<GridView>(R.id.color_gallery)
+        val adapter = ColorAdapter(this, colorList) { position ->
+            colorBlockClick(position)
+        }
+        colorGallery.adapter = adapter
+    }
+
+    private fun colorBlockClick(position: Int) {
+        Toast.makeText(this, position.toString(), Toast.LENGTH_SHORT).show()
     }
 
     override fun onResume() {
