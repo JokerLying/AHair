@@ -54,6 +54,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var cameraHelper: CameraXPreviewHelper
 
+    private var initDone = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -77,6 +79,10 @@ class MainActivity : AppCompatActivity() {
                     gestureLayout.viewTreeObserver.removeOnGlobalLayoutListener(this)
                     val height = gestureLayout.measuredHeight
                     sheetBehavior.peekHeight = height
+
+                    initDone = true
+                    rebuild()
+
                 }
             })
         sheetBehavior.addBottomSheetCallback(
@@ -167,7 +173,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        rebuild()
+        if (initDone) {
+            rebuild()
+        }
     }
 
     override fun onPause() {
