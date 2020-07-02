@@ -143,7 +143,11 @@ class MainActivity : AppCompatActivity() {
                 .show()
         } else {
             BINARY_GRAPH_NAME = COLOR_BLOCK[position] + ".binarypb"
-            rebuild()
+            if (PermissionHelper.cameraPermissionsGranted(this)) {
+                rebuild()
+            } else {
+                PermissionHelper.checkAndRequestCameraPermissions(this)
+            }
         }
     }
 
@@ -180,7 +184,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        converter.close()
+        if (initDone) {
+            converter.close()
+        }
     }
 
     override fun onRequestPermissionsResult(
