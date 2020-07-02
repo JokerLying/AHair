@@ -17,8 +17,6 @@
         android:id="@+id/gesture_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -27,8 +25,20 @@
             android:id="@+id/bottom_sheet_arrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
+            android:layout_centerInParent="true"
             android:src="@mipmap/icn_chevron_up" />
+
+        <TextView
+            android:id="@+id/author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
+            android:text="@string/author"
+            android:textColor="#08FFFFFF"
+            android:textSize="12sp" />
 
     </RelativeLayout>
 
@@ -40,8 +50,6 @@
         android:paddingBottom="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/gesture_layout">
-
-    </GridView>
+        app:layout_constraintTop_toBottomOf="@id/gesture_layout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

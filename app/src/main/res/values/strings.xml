@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">AHair</string>
     <string name="no_camera_access" translatable="false">Please grant camera permissions.</string>
+    <string name="author">By GnayUil</string>
 </resources>
